@@ -6,13 +6,11 @@ require 'tracer'
 
 class IndentedTracer < Tracer
 
-  attr_accessor :classes
-  
-  def initialize()
+  def initialize(classes)
     super
 
     add_filter do |event, file, line, id, binding, klass, *rest|
-      if klass.to_s[/#{@classes.join('|')}/] then
+      if klass.to_s[/#{classes.join('|')}/] then
 
         if event == 'call' then
 
@@ -22,7 +20,7 @@ class IndentedTracer < Tracer
 
           end
  
-          @current << [klass.to_s + '#' + id.to_s]            
+          @current << [id]            
           @grandparent = @parent
           @parent = @current
           @current = @current.last
@@ -39,8 +37,7 @@ class IndentedTracer < Tracer
   end
 
   def log()
-    "<?polyrex schema='session/entry[classname, methodname]' " + \
-        "delimiter='#'?>\n" + print_all(@a)
+    print_all(@a)
   end
 
   private
