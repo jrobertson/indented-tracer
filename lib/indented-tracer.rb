@@ -38,9 +38,10 @@ class IndentedTracer < Tracer
 
   end
 
-  def log()
-    "<?polyrex schema='session/entry[classname, methodname]' " + \
-        "delimiter='#'?>\n" + print_all(@a)
+  def log(title, tags: tags=[])
+    "<?polyrex schema='session[title,tags]/entry[classname, methodname]' " + \
+        "delimiter='#'?>\ntitle: #{title}\ntags: #{(['trace'] + tags)
+        .join(' ')}\n\n" +  print_all(@a)
   end
 
   private
