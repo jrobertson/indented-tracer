@@ -6,14 +6,17 @@ require 'tracer'
 
 class IndentedTracer < Tracer
 
-  attr_accessor :classes
+  attr_accessor :classes, :ignore_methods
   
   def initialize()
     super
+    
+    @ignore_methods = []
 
     add_filter do |event, file, line, id, binding, klass, *rest|
 
-      if @classes.map(&:to_s).include? klass.to_s then
+      if @classes.map(&:to_s).include? klass.to_s and 
+          !@ignore_methods.map(&:to_sym).include? id.to_sym then
 
         if event == 'call' then
 
@@ -39,7 +42,7 @@ class IndentedTracer < Tracer
 
   end
 
-  def log(title, tags: tags=[])
+  def log(title='', tags: tags=[])
     "<?polyrex schema='session[title,tags]/entry[classname, methodname]' " + \
         "delimiter='#'?>\ntitle: #{title}\ntags: #{(['trace'] + tags)
         .join(' ')}\n\n" +  print_all(@a)
