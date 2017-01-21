@@ -12,7 +12,8 @@ class IndentedTracer < Tracer
     super
 
     add_filter do |event, file, line, id, binding, klass, *rest|
-      if klass.to_s[/#{@classes.join('|')}/] then
+
+      if @classes.map(&:to_s).include? klass.to_s then
 
         if event == 'call' then
 
